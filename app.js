@@ -18,6 +18,28 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected to DB!");
-    
-
+    addDepartment();
+    // connection.end();
 });
+
+function addDepartment() {
+    inquirer
+        .prompt([
+            {
+                name: "department",
+                type: "input",
+                message: "What is the name of the department you'd like to add?"
+            }
+        ])
+        .then(function(answer) {
+            let query = "INSERT INTO department SET ?"
+            connection.query(query, 
+                {
+                    name: answer.department
+                },
+                function(err) {
+                    if (err) throw err;
+                    console.log("The new department was added!");
+        });
+    });
+};
