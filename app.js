@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const consoleTable = require("console.table");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -21,7 +21,8 @@ connection.connect(function (err) {
     console.log("Connected to workforceDB!");
     // addDepartment();
     // addRole();
-    addEmployee();
+    // addEmployee();
+    viewDepartments();
     // connection.end();
 });
 
@@ -133,7 +134,19 @@ function addEmployee() {
 function viewDepartments() {
     inquirer
         .prompt([
-            
+            {
+                name: "departments",
+                type: "list",
+                message: "Do you want to view the departments?",
+                choices: ["Yes", "No"]
+            }
         ])
+        .then(function (answer) {
+            let query = "SELECT * FROM department"
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
+        });
+};
 
-}
