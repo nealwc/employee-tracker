@@ -22,7 +22,8 @@ connection.connect(function (err) {
     // addDepartment();
     // addRole();
     // addEmployee();
-    viewDepartments();
+    // viewDepartments();
+    viewRoles();
     // connection.end();
 });
 
@@ -143,6 +144,25 @@ function viewDepartments() {
         ])
         .then(function (answer) {
             let query = "SELECT * FROM department"
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
+        });
+};
+
+function viewRoles() {
+    inquirer
+        .prompt([
+            {
+                name: "roles",
+                type: "list",
+                message: "Do you want to view the roles?",
+                choices: ["Yes", "No"]
+            }
+        ])
+        .then(function (answer) {
+            let query = "SELECT * FROM role"
             connection.query(query, function (err, res) {
                 if (err) throw err;
                 console.table(res);
