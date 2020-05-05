@@ -129,3 +129,11 @@ function addEmployee() {
                 });
         });
 };
+
+function viewDepartments() {
+    inquirer
+        .prompt([
+            
+        ])
+
+}
