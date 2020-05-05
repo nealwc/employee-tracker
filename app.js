@@ -23,7 +23,8 @@ connection.connect(function (err) {
     // addRole();
     // addEmployee();
     // viewDepartments();
-    viewRoles();
+    // viewRoles();
+    viewEmployees();
     // connection.end();
 });
 
@@ -170,3 +171,21 @@ function viewRoles() {
         });
 };
 
+function viewEmployees() {
+    inquirer
+        .prompt([
+            {
+                name: "employees",
+                type: "list",
+                message: "Do you want to view the employees?",
+                choices: ["Yes", "No"]
+            }
+        ])
+        .then(function (answer) {
+            let query = "SELECT * FROM employee"
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
+        });
+};
