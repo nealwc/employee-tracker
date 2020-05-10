@@ -19,14 +19,58 @@ const connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("Connected to workforceDB!");
-    // addDepartment();
-    // addRole();
-    // addEmployee();
-    // viewDepartments();
-    // viewRoles();
-    viewEmployees();
+    runWorkforce();
     // connection.end();
 });
+
+function runWorkforce() {
+    inquirer
+        .prompt({
+            name: "action",
+            type: "rawlist",
+            message: "What would you like to do?",
+            choices: [
+                "View All Departments",
+                "View All Roles",
+                "View All Employees",
+                "Add a Department",
+                "Add a Role",
+                "Add an Employee",
+                "Update Employee Roles"
+            ]
+        })
+        .then(function (answer) {
+            switch (answer.action) {
+                case "View All Departments":
+                    viewDepartments();
+                    break;
+
+                case "View All Roles":
+                    viewRoles();
+                    break;
+
+                case "View All Employees":
+                    viewEmployees();
+                    break;
+
+                case "Add a Department":
+                    addDepartment();
+                    break;
+
+                case "Add a Role":
+                    addRole();
+                    break;
+
+                case "Add an Employee":
+                    addEmployee();
+                    break;
+
+                case "Update Employee Roles":
+                    updateEmployee();
+                    break;
+            }
+        });
+};
 
 function addRole() {
     inquirer
@@ -112,7 +156,7 @@ function addEmployee() {
                 name: "manager",
                 type: "input",
                 message: "What's the name of the manager?",
-                when: function(answer) {
+                when: function (answer) {
                     return answer.confirmManager === "Yes";
                 }
             }
@@ -134,58 +178,38 @@ function addEmployee() {
 };
 
 function viewDepartments() {
-    inquirer
-        .prompt([
-            {
-                name: "departments",
-                type: "list",
-                message: "Do you want to view the departments?",
-                choices: ["Yes", "No"]
-            }
-        ])
-        .then(function (answer) {
-            let query = "SELECT * FROM department"
-            connection.query(query, function (err, res) {
-                if (err) throw err;
-                console.table(res);
-            });
-        });
+    let query = "SELECT * FROM department"
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runWorkforce();
+    });
 };
 
 function viewRoles() {
-    inquirer
-        .prompt([
-            {
-                name: "roles",
-                type: "list",
-                message: "Do you want to view the roles?",
-                choices: ["Yes", "No"]
-            }
-        ])
-        .then(function (answer) {
-            let query = "SELECT * FROM role"
-            connection.query(query, function (err, res) {
-                if (err) throw err;
-                console.table(res);
-            });
-        });
+    let query = "SELECT * FROM role"
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runWorkforce();
+    });
 };
 
 function viewEmployees() {
+    let query = "SELECT * FROM employee"
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runWorkforce();
+    });
+};
+
+function updateEmployee() {
     inquirer
         .prompt([
             {
-                name: "employees",
+                name: "employeeUpdate",
                 type: "list",
-                message: "Do you want to view the employees?",
-                choices: ["Yes", "No"]
             }
         ])
-        .then(function (answer) {
-            let query = "SELECT * FROM employee"
-            connection.query(query, function (err, res) {
-                if (err) throw err;
-                console.table(res);
-            });
-        });
 };
