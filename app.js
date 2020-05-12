@@ -147,7 +147,7 @@ function addEmployee() {
             {
                 name: "role",
                 type: "input",
-                message: "What role does the new employee have?"
+                message: "What's the role ID for the new employee?"
             },
             {
                 name: "confirmManager",
@@ -158,7 +158,7 @@ function addEmployee() {
             {
                 name: "manager",
                 type: "input",
-                message: "What's the name of the manager?",
+                message: "What's the employee ID of the manager?",
                 when: function (answer) {
                     return answer.confirmManager === "Yes";
                 }
@@ -176,7 +176,7 @@ function addEmployee() {
                 function (err) {
                     if (err) throw err;
                     console.log("The new role was added!");
-                    addEmployee();
+                    runWorkforce();
                 });
         });
 };
