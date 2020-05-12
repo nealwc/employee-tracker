@@ -4,14 +4,8 @@ const cTable = require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
-
-    // Your port; if not 3306
     port: 3306,
-
-    // Your username
     user: "root",
-
-    // Your password
     password: "",
     database: "workforceDB"
 });
@@ -20,14 +14,14 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("Connected to workforceDB!");
     runWorkforce();
-    // connection.end();
 });
 
+// main interface
 function runWorkforce() {
     inquirer
         .prompt({
             name: "action",
-            type: "rawlist",
+            type: "list",
             message: "What would you like to do?",
             choices: [
                 "View All Departments",
@@ -36,7 +30,8 @@ function runWorkforce() {
                 "Add a Department",
                 "Add a Role",
                 "Add an Employee",
-                "Update Employee Roles"
+                "Update Employee Roles",
+                "EXIT"
             ]
         })
         .then(function (answer) {
@@ -68,10 +63,14 @@ function runWorkforce() {
                 case "Update Employee Roles":
                     updateEmployee();
                     break;
+
+                case "EXIT":
+                    connection.end();
             }
         });
 };
 
+// function to add a role
 function addRole() {
     inquirer
         .prompt([
@@ -88,7 +87,7 @@ function addRole() {
             {
                 name: "department",
                 type: "input",
-                message: "What's the number of the department "
+                message: "What's the ID of the department?"
             }
         ])
         .then(function (answer) {
@@ -102,10 +101,12 @@ function addRole() {
                 function (err) {
                     if (err) throw err;
                     console.log("The new role was added!");
+                    runWorkforce();
                 });
         });
 };
 
+// function to add a department
 function addDepartment() {
     inquirer
         .prompt([
@@ -124,10 +125,12 @@ function addDepartment() {
                 function (err) {
                     if (err) throw err;
                     console.log("The new department was added!");
+                    runWorkforce();
                 });
         });
 };
 
+// function to add an employee
 function addEmployee() {
     inquirer
         .prompt([
@@ -173,10 +176,12 @@ function addEmployee() {
                 function (err) {
                     if (err) throw err;
                     console.log("The new role was added!");
+                    addEmployee();
                 });
         });
 };
 
+// function to view all departments
 function viewDepartments() {
     let query = "SELECT * FROM department"
     connection.query(query, function (err, res) {
@@ -186,6 +191,8 @@ function viewDepartments() {
     });
 };
 
+
+// function to view all rolse
 function viewRoles() {
     let query = "SELECT * FROM role"
     connection.query(query, function (err, res) {
@@ -195,6 +202,8 @@ function viewRoles() {
     });
 };
 
+
+// function to view all employees
 function viewEmployees() {
     let query = "SELECT * FROM employee"
     connection.query(query, function (err, res) {
@@ -204,12 +213,36 @@ function viewEmployees() {
     });
 };
 
+// functin to update employee roles
 function updateEmployee() {
     inquirer
         .prompt([
             {
-                name: "employeeUpdate",
-                type: "list",
+                name: "employeeID",
+                type: "number",
+                message: "What's the ID of the employee you'd like to update?"
+            },
+            {
+                name: "roleID",
+                type: "number",
+                message: "What's the ID of the new role?"
             }
-        ])
+        ]).then(function (answer) {
+            var query = connection.query(
+                "UPDATE employee SET ? WHERE ?",
+                [
+                    {
+                        role_id: answer.roleID
+                    },
+                    {
+                        id: answer.employeeID
+                    }
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("The employee's new role ID has been updated!");
+                    runWorkforce();
+                }
+            );
+        })
 };
